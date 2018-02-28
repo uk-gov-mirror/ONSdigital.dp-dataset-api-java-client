@@ -1,5 +1,6 @@
 package dp.api.dataset.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -9,10 +10,19 @@ import java.io.IOException;
  */
 public class Dataset {
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String id;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String title;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String collection_id;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private DatasetLinks links;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private State state;
 
     public String getId() {

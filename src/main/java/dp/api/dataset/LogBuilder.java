@@ -12,8 +12,4 @@ public class LogBuilder extends LogMessageBuilder {
     public LogBuilder(String eventDescription) {
         super(eventDescription);
     }
-
-    public LogBuilder(Throwable t, String description) {
-        super(t, description);
-    }
 }

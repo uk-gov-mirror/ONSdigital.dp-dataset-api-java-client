@@ -1,14 +1,28 @@
 package dp.api.dataset.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class DatasetVersion {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String edition;
-    private Integer version;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String version;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String release_date;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private State state;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String collection_id;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private DatasetLinks links;
 
     public String getId() {
@@ -27,11 +41,11 @@ public class DatasetVersion {
         this.edition = edition;
     }
 
-    public int getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
@@ -41,10 +55,6 @@ public class DatasetVersion {
 
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
     }
 
     public State getState() {
