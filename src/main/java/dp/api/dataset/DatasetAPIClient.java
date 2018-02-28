@@ -99,7 +99,9 @@ public class DatasetAPIClient implements DatasetClient {
                 case HttpStatus.SC_NOT_FOUND:
                     throw new InstanceNotFoundException(formatErrResponse(httpRequest, response));
                 default:
-                    throw new UnexpectedResponseException(formatErrResponse(httpRequest, response));
+                    throw new UnexpectedResponseException(
+                            formatErrResponse(httpRequest, response),
+                            response.getStatusLine().getStatusCode());
             }
         }
     }
@@ -144,7 +146,9 @@ public class DatasetAPIClient implements DatasetClient {
                 case HttpStatus.SC_NOT_FOUND:
                     throw new DatasetNotFoundException(formatErrResponse(httpRequest, response));
                 default:
-                    throw new UnexpectedResponseException(formatErrResponse(httpRequest, response));
+                    throw new UnexpectedResponseException(
+                            formatErrResponse(httpRequest, response),
+                            response.getStatusLine().getStatusCode());
             }
         }
     }
@@ -289,7 +293,9 @@ public class DatasetAPIClient implements DatasetClient {
             case HttpStatus.SC_NOT_FOUND:
                 throw new DatasetNotFoundException(formatErrResponse(httpRequest, response));
             default:
-                throw new UnexpectedResponseException(formatErrResponse(httpRequest, response));
+                throw new UnexpectedResponseException(
+                        formatErrResponse(httpRequest, response),
+                        response.getStatusLine().getStatusCode());
         }
     }
 
