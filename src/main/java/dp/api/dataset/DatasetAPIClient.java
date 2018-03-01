@@ -143,8 +143,6 @@ public class DatasetAPIClient implements DatasetClient {
                 case HttpStatus.SC_CREATED:
                     DatasetResponse datasetResponse = parseResponseBody(response, DatasetResponse.class);
                     return datasetResponse.getNext();
-                case HttpStatus.SC_NOT_FOUND:
-                    throw new DatasetNotFoundException(formatErrResponse(httpRequest, response));
                 default:
                     throw new UnexpectedResponseException(
                             formatErrResponse(httpRequest, response),

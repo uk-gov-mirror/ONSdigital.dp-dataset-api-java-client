@@ -98,24 +98,6 @@ public class DatasetAPIClientTest {
     }
 
     @Test
-    public void testDatasetAPI_createDataset_datasetNotFound() throws Exception {
-
-        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
-
-        // Given a request to the dataset API that returns a 404
-        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_NOT_FOUND);
-        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
-
-        Dataset dataset = new Dataset();
-
-        // When createDataset is called
-        // Then the expected exception is thrown
-        assertThrows(DatasetNotFoundException.class,
-                () -> datasetAPIClient.createDataset(datasetID, dataset));
-    }
-
-    @Test
     public void testDatasetAPI_createDataset_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
