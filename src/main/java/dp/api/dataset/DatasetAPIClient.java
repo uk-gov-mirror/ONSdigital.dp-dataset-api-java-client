@@ -82,7 +82,7 @@ public class DatasetAPIClient implements DatasetClient {
         validateInstanceID(instanceID);
 
         String path = "/instances/" + instanceID;
-        URI uri = getURI(path);
+        URI uri = datasetAPIURL.resolve(path);
 
         HttpGet httpRequest = new HttpGet(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
@@ -121,7 +121,7 @@ public class DatasetAPIClient implements DatasetClient {
         validateDatasetID(datasetID);
 
         String path = "/datasets/" + datasetID;
-        URI uri = getURI(path);
+        URI uri = datasetAPIURL.resolve(path);
 
         HttpPost httpRequest = new HttpPost(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
@@ -165,7 +165,7 @@ public class DatasetAPIClient implements DatasetClient {
         validateDatasetID(datasetID);
 
         String path = "/datasets/" + datasetID;
-        URI uri = getURI(path);
+        URI uri = datasetAPIURL.resolve(path);
 
         HttpGet httpRequest = new HttpGet(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
@@ -197,7 +197,7 @@ public class DatasetAPIClient implements DatasetClient {
         validateDatasetID(datasetID);
 
         String path = "/datasets/" + datasetID;
-        URI uri = getURI(path);
+        URI uri = datasetAPIURL.resolve(path);
 
         HttpPut httpRequest = new HttpPut(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
@@ -232,7 +232,7 @@ public class DatasetAPIClient implements DatasetClient {
         validateVersion(version);
 
         String path = String.format("/datasets/%s/editions/%s/versions/%s", datasetID, edition, version);
-        URI uri = getURI(path);
+        URI uri = datasetAPIURL.resolve(path);
 
         HttpGet httpRequest = new HttpGet(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
@@ -266,7 +266,7 @@ public class DatasetAPIClient implements DatasetClient {
         validateVersion(version);
 
         String path = String.format("/datasets/%s/editions/%s/versions/%s", datasetID, edition, version);
-        URI uri = getURI(path);
+        URI uri = datasetAPIURL.resolve(path);
 
         HttpPut httpRequest = new HttpPut(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
@@ -303,20 +303,6 @@ public class DatasetAPIClient implements DatasetClient {
         StringEntity stringEntity = new StringEntity(body);
         httpRequest.setEntity(stringEntity);
     }
-
-    private URI getURI(String path) throws BadRequestException {
-
-        URI uri;
-        try {
-            uri = new URIBuilder(datasetAPIURL)
-                    .setPath(path)
-                    .build();
-        } catch (URISyntaxException e) {
-            throw new BadRequestException(e.getMessage());
-        }
-        return uri;
-    }
-
 
     private void validateDatasetID(String datasetID) {
         Args.check(isNotEmpty(datasetID), "a dataset id must be provided.");
