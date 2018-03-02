@@ -25,6 +25,9 @@ public class Dataset {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private State state;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String uri;
+
     public String getId() {
         return id;
     }
@@ -63,6 +66,14 @@ public class Dataset {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public static void main(String[] args) throws IOException {
