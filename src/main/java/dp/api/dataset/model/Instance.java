@@ -1,13 +1,22 @@
 package dp.api.dataset.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * The model of an instance as provided by the dataset API.
  */
 public class Instance {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String edition;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String version;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Links links;
 
     public String getId() {

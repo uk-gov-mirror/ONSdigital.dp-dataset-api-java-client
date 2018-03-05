@@ -1,9 +1,16 @@
 package dp.api.dataset.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class DatasetResponse {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Dataset current;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Dataset next;
 
     public String getId() {
