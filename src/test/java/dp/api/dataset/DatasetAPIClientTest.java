@@ -578,6 +578,57 @@ public class DatasetAPIClientTest {
                 () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
     }
 
+    @Test
+    public void testDatasetAPI_deleteDataset() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a mock dataset response from the dataset API
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_NO_CONTENT);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When deleteDataset is called
+        datasetAPIClient.deleteDataset(datasetID);
+
+        HttpRequestBase httpRequest = captureHttpRequest(mockHttpClient);
+
+        // Then the request should contain the authentication header
+        String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
+        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+    }
+
+    @Test
+    public void testDatasetAPI_deleteDataset_internalError() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 500
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When deleteDataset is called
+        // Then the expected exception is thrown
+        assertThrows(UnexpectedResponseException.class,
+                () -> datasetAPIClient.deleteDataset(datasetID));
+    }
+
+    @Test
+    public void testDatasetAPI_deleteDataset_emptyDatasetID() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given an empty dataset ID
+        String datasetID = "";
+
+        // When updateDataset is called
+        // Then the expected exception is thrown
+        assertThrows(IllegalArgumentException.class,
+                () -> datasetAPIClient.deleteDataset(datasetID));
+    }
+
     private CloseableHttpResponse mockHttpResponse(int httpStatus) {
 
         CloseableHttpResponse mockHttpResponse = mock(CloseableHttpResponse.class);

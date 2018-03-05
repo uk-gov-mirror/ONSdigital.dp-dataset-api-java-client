@@ -25,6 +25,11 @@ public interface DatasetClient {
     Dataset getDataset(String datasetID)  throws IOException, DatasetAPIException;
 
     /**
+     * Delete the dataset for the given dataset ID.
+     */
+    void deleteDataset(String datasetID) throws IOException, DatasetAPIException;
+
+    /**
      * Update the dataset for the given dataset ID with the given dataset instance data.
      */
     void updateDataset(String datasetID, Dataset dataset) throws IOException, DatasetAPIException;

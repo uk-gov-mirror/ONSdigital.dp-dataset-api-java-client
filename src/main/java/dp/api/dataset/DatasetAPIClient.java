@@ -2,7 +2,6 @@ package dp.api.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dp.api.dataset.exception.BadRequestException;
 import dp.api.dataset.exception.DatasetAPIException;
 import dp.api.dataset.exception.DatasetNotFoundException;
 import dp.api.dataset.exception.InstanceNotFoundException;
@@ -14,12 +13,12 @@ import dp.api.dataset.model.Instance;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -179,6 +178,41 @@ public class DatasetAPIClient implements DatasetClient {
 
             DatasetResponse datasetResponse = parseResponseBody(response, DatasetResponse.class);
             return datasetResponse.getNext();
+        }
+    }
+
+    /**
+     * Delete the dataset for the given dataset ID.
+     *
+     * @param datasetID
+     * @return
+     * @throws IOException
+     * @throws DatasetAPIException
+     */
+    @Override
+    public void deleteDataset(String datasetID) throws IOException, DatasetAPIException {
+
+        validateDatasetID(datasetID);
+
+        String path = "/datasets/" + datasetID;
+        URI uri = datasetAPIURL.resolve(path);
+
+        HttpDelete httpRequest = new HttpDelete(uri);
+        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+
+        logRequest(httpRequest);
+
+        try (CloseableHttpResponse response = client.execute(httpRequest)) {
+
+            logResponse(httpRequest, response);
+            switch (response.getStatusLine().getStatusCode()) {
+                case HttpStatus.SC_NO_CONTENT:
+                    return;
+                default:
+                    throw new UnexpectedResponseException(
+                            formatErrResponse(httpRequest, response),
+                            response.getStatusLine().getStatusCode());
+            }
         }
     }
 
