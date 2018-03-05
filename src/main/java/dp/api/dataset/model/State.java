@@ -1,18 +1,18 @@
 package dp.api.dataset.model;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum State {
 
-    @SerializedName("created")
+    @JsonProperty("created")
     CREATED,
 
-    @SerializedName("edition-confirmed")
+    @JsonProperty("edition-confirmed")
     EDITION_CONFIRMED,
 
-    @SerializedName("associated")
+    @JsonProperty("associated")
     ASSOCIATED,
 
-    @SerializedName("published")
+    @JsonProperty("published")
     PUBLISHED,
 }
