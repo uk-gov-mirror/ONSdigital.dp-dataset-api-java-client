@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * The link structure used by the dataset API.
  */
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Link {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

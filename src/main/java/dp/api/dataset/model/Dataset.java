@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * The model of a dataset as provided by the dataset API.
  */
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Dataset {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * The model of an instance as provided by the dataset API.
  */
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Instance {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
