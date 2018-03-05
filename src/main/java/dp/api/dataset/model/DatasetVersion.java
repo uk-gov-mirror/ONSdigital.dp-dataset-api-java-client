@@ -1,7 +1,9 @@
 package dp.api.dataset.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonIgnoreProperties
 public class DatasetVersion {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

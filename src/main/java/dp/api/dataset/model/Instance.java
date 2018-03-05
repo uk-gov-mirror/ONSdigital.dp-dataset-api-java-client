@@ -1,10 +1,12 @@
 package dp.api.dataset.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * The model of an instance as provided by the dataset API.
  */
+@JsonIgnoreProperties
 public class Instance {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

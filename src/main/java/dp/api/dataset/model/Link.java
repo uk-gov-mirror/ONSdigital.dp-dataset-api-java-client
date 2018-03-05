@@ -1,10 +1,12 @@
 package dp.api.dataset.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * The link structure used by the dataset API.
  */
+@JsonIgnoreProperties
 public class Link {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
