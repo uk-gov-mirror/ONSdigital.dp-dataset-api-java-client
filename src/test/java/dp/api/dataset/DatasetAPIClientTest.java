@@ -2,8 +2,10 @@ package dp.api.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dp.api.dataset.exception.DatasetAlreadyExistsException;
 import dp.api.dataset.exception.DatasetNotFoundException;
 import dp.api.dataset.exception.InstanceNotFoundException;
+import dp.api.dataset.exception.UnauthorisedException;
 import dp.api.dataset.exception.UnexpectedResponseException;
 import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetResponse;
@@ -17,7 +19,6 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.codehaus.jackson.map.util.JSONPObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -137,6 +138,42 @@ public class DatasetAPIClientTest {
         // When createDataset is called
         // Then the expected exception is thrown
         assertThrows(UnexpectedResponseException.class,
+                () -> datasetAPIClient.createDataset(datasetID, dataset));
+    }
+
+    @Test
+    public void testDatasetAPI_createDataset_unauthorised() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 401
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_UNAUTHORIZED);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        Dataset dataset = new Dataset();
+
+        // When createDataset is called
+        // Then the expected exception is thrown
+        assertThrows(UnauthorisedException.class,
+                () -> datasetAPIClient.createDataset(datasetID, dataset));
+    }
+
+    @Test
+    public void testDatasetAPI_createDataset_forbidden() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 403
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_FORBIDDEN);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        Dataset dataset = new Dataset();
+
+        // When createDataset is called
+        // Then the expected exception is thrown
+        assertThrows(DatasetAlreadyExistsException.class,
                 () -> datasetAPIClient.createDataset(datasetID, dataset));
     }
 

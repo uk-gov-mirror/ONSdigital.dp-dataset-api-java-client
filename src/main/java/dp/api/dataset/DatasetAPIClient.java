@@ -3,8 +3,10 @@ package dp.api.dataset;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dp.api.dataset.exception.DatasetAPIException;
+import dp.api.dataset.exception.DatasetAlreadyExistsException;
 import dp.api.dataset.exception.DatasetNotFoundException;
 import dp.api.dataset.exception.InstanceNotFoundException;
+import dp.api.dataset.exception.UnauthorisedException;
 import dp.api.dataset.exception.UnexpectedResponseException;
 import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetResponse;
@@ -142,6 +144,10 @@ public class DatasetAPIClient implements DatasetClient {
                 case HttpStatus.SC_CREATED:
                     DatasetResponse datasetResponse = parseResponseBody(response, DatasetResponse.class);
                     return datasetResponse.getNext();
+                case HttpStatus.SC_UNAUTHORIZED:
+                    throw new UnauthorisedException();
+                case HttpStatus.SC_FORBIDDEN:
+                    throw new DatasetAlreadyExistsException();
                 default:
                     throw new UnexpectedResponseException(
                             formatErrResponse(httpRequest, response),

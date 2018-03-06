@@ -5,4 +5,6 @@ public abstract class DatasetAPIException extends Exception {
     public DatasetAPIException(String message) {
         super(message);
     }
+
+    public DatasetAPIException() {}
 }
