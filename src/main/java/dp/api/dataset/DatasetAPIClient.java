@@ -43,7 +43,7 @@ public class DatasetAPIClient implements DatasetClient, Closeable {
 
     private final CloseableHttpClient client;
 
-    private static final String authTokenHeaderName = "internal-token";
+    private static final String authTokenHeaderName = "Internal-token";
     private static final ObjectMapper json = new ObjectMapper();
 
     /**

@@ -77,9 +77,5 @@ public class Dataset {
     public void setUri(String uri) {
         this.uri = uri;
     }
-
-    public static void main(String[] args) throws IOException {
-        System.out.println(new ObjectMapper().writeValueAsString(new Dataset()));
-    }
 }
 

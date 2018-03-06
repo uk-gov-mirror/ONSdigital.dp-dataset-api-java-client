@@ -40,7 +40,7 @@ public class DatasetAPIClientTest {
 
     private static final ObjectMapper json = new ObjectMapper();
 
-    private static final String authTokenHeaderName = "internal-token";
+    private static final String authTokenHeaderName = "Internal-token";
 
     private static final String datasetAPIURL = "";
     private static final String datasetAPIAuthToken = "12345";
