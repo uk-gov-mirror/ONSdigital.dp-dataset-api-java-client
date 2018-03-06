@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -95,6 +96,30 @@ public class DatasetAPIClientTest {
         assertNotNull(actualDataset);
         assertThat(actualDataset.getId()).isEqualTo(expectedDataset.getId());
         assertThat(actualDataset.getTitle()).isEqualTo(expectedDataset.getTitle());
+    }
+
+    @Test
+    public void testDatasetAPI_createDataset_unknownResponseFields() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a mock dataset API response that has unknown fields (fields that are not defined in the model)
+
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_CREATED);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        Dataset dataset = createDataset();
+
+        String responseJSON = "{\"id\":\"123\",\"unknown_field\":\"543\",\"next\":{ \"id\":\"123\" }}";
+        when(mockHttpResponse.getEntity()).thenReturn(new StringEntity(responseJSON));
+
+        // When createDataset is called
+        Dataset actualDataset = datasetAPIClient.createDataset(datasetID, dataset);
+
+        // Then the response should be whats returned from the dataset API
+        assertNotNull(actualDataset);
+        assertThat(actualDataset.getId()).isEqualTo("123");
     }
 
     @Test
