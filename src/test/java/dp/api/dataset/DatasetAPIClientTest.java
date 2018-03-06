@@ -22,6 +22,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -689,6 +691,20 @@ public class DatasetAPIClientTest {
         // Then the expected exception is thrown
         assertThrows(IllegalArgumentException.class,
                 () -> datasetAPIClient.deleteDataset(datasetID));
+    }
+
+    @Test
+    public void testDatasetAPI_close() throws Exception {
+
+        // Given a dataset API client implements closable
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        Closeable datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // When close is called
+        datasetAPIClient.close();
+
+        // Then close is called on the underlying httpClient
+        verify(mockHttpClient, times(1)).close();
     }
 
     private CloseableHttpResponse mockHttpResponse(int httpStatus) {

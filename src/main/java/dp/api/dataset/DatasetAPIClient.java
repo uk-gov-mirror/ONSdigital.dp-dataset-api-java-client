@@ -27,6 +27,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -35,15 +36,15 @@ import java.net.URISyntaxException;
 /**
  * HTTP client for the dataset API.
  */
-public class DatasetAPIClient implements DatasetClient {
+public class DatasetAPIClient implements DatasetClient, Closeable {
 
     private final URI datasetAPIURL;
     private final String datasetAPIAuthToken;
 
+    private final CloseableHttpClient client;
+
     private static final String authTokenHeaderName = "internal-token";
     private static final ObjectMapper json = new ObjectMapper();
-
-    private CloseableHttpClient client;
 
     /**
      * Create a new instance of DatasetAPIClient
@@ -395,24 +396,8 @@ public class DatasetAPIClient implements DatasetClient {
                 httpRequest.getURI());
     }
 
-    public static void main(String[] args) throws Exception {
-        String key = "FD0108EA-825D-411C-9B1D-41EF7727F465";
-        String url = "http://localhost:22000";
-
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(url, key);
-
-        Dataset dataset = new Dataset();
-        dataset.setId("123");
-        dataset.setTitle("123");
-
-        //System.out.println(json.writeValueAsString(dataset));
-        //datasetAPIClient.createDataset("123", dataset);
-
-
-        dataset.setTitle("wut");
-        datasetAPIClient.updateDataset("123", dataset);
-
-        Dataset updated = datasetAPIClient.getDataset("123");
-        System.out.println("updated.getTitle() = " + updated.getTitle());
+    @Override
+    public void close() throws IOException {
+        client.close();
     }
 }
