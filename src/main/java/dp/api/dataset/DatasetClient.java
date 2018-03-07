@@ -5,9 +5,10 @@ import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetVersion;
 import dp.api.dataset.model.Instance;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-public interface DatasetClient {
+public interface DatasetClient extends Closeable {
 
     /**
      * Get the instance for the given instance ID.

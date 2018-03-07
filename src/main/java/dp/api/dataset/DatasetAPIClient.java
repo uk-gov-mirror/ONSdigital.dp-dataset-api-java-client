@@ -27,7 +27,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -36,7 +35,7 @@ import java.net.URISyntaxException;
 /**
  * HTTP client for the dataset API.
  */
-public class DatasetAPIClient implements DatasetClient, Closeable {
+public class DatasetAPIClient implements DatasetClient {
 
     private final URI datasetAPIURL;
     private final String datasetAPIAuthToken;
