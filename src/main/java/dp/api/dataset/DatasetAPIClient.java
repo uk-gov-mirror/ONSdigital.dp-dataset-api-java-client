@@ -2,6 +2,7 @@ package dp.api.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dp.api.dataset.exception.BadRequestException;
 import dp.api.dataset.exception.DatasetAPIException;
 import dp.api.dataset.exception.DatasetAlreadyExistsException;
 import dp.api.dataset.exception.DatasetNotFoundException;
@@ -66,6 +67,8 @@ public class DatasetAPIClient implements DatasetClient {
      * @param datasetAPIAuthToken - The authentication token for the dataset API
      */
     public DatasetAPIClient(String datasetAPIURL, String datasetAPIAuthToken) throws URISyntaxException {
+
+        // by default the HTTP client will retry failed requests 3 times.
         this(datasetAPIURL, datasetAPIAuthToken, HttpClients.createDefault());
     }
 
@@ -134,11 +137,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         try (CloseableHttpResponse response = client.execute(httpRequest)) {
 
-            new LogBuilder("Dataset API response")
-                    .addParameter("uri", httpRequest.getURI())
-                    .addParameter("method", httpRequest.getMethod())
-                    .addParameter("status", response.getStatusLine())
-                    .log();
+            logResponse(httpRequest, response);
 
             switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_CREATED:
@@ -250,7 +249,21 @@ public class DatasetAPIClient implements DatasetClient {
         try (CloseableHttpResponse response = client.execute(httpRequest)) {
 
             logResponse(httpRequest, response);
-            validate200ResponseCode(httpRequest, response);
+
+            switch (response.getStatusLine().getStatusCode()) {
+                case HttpStatus.SC_OK:
+                    return;
+                case HttpStatus.SC_NOT_FOUND:
+                    throw new DatasetNotFoundException(formatErrResponse(httpRequest, response));
+                case HttpStatus.SC_UNAUTHORIZED:
+                    throw new UnauthorisedException();
+                case HttpStatus.SC_BAD_REQUEST:
+                    throw new BadRequestException("invalid dataset request");
+                default:
+                    throw new UnexpectedResponseException(
+                            formatErrResponse(httpRequest, response),
+                            response.getStatusLine().getStatusCode());
+            }
         }
     }
 
@@ -323,13 +336,15 @@ public class DatasetAPIClient implements DatasetClient {
         }
     }
 
-    private void validate200ResponseCode(HttpRequestBase httpRequest, CloseableHttpResponse response) throws DatasetNotFoundException, UnexpectedResponseException {
+    private void validate200ResponseCode(HttpRequestBase httpRequest, CloseableHttpResponse response) throws DatasetNotFoundException, UnexpectedResponseException, UnauthorisedException {
 
         switch (response.getStatusLine().getStatusCode()) {
             case HttpStatus.SC_OK:
                 return;
             case HttpStatus.SC_NOT_FOUND:
                 throw new DatasetNotFoundException(formatErrResponse(httpRequest, response));
+            case HttpStatus.SC_UNAUTHORIZED:
+                throw new UnauthorisedException();
             default:
                 throw new UnexpectedResponseException(
                         formatErrResponse(httpRequest, response),
