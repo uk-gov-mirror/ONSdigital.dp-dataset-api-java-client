@@ -2,9 +2,6 @@ package dp.api.dataset.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.io.IOException;
 
 /**
  * The model of a dataset as provided by the dataset API.
