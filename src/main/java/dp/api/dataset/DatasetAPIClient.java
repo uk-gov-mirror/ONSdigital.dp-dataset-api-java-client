@@ -68,8 +68,14 @@ public class DatasetAPIClient implements DatasetClient {
      */
     public DatasetAPIClient(String datasetAPIURL, String datasetAPIAuthToken) throws URISyntaxException {
 
-        // by default the HTTP client will retry failed requests 3 times.
-        this(datasetAPIURL, datasetAPIAuthToken, HttpClients.createDefault());
+        this(datasetAPIURL, datasetAPIAuthToken, createDefaultHttpClient());
+    }
+
+    private static CloseableHttpClient createDefaultHttpClient() {
+
+        return HttpClients.custom()
+                .setServiceUnavailableRetryStrategy(new RetryStrategy())
+                .build();
     }
 
     /**
