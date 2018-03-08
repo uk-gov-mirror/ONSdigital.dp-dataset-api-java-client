@@ -2,6 +2,7 @@ package dp.api.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dp.api.dataset.exception.BadRequestException;
 import dp.api.dataset.exception.DatasetAlreadyExistsException;
 import dp.api.dataset.exception.DatasetNotFoundException;
 import dp.api.dataset.exception.InstanceNotFoundException;
@@ -257,6 +258,22 @@ public class DatasetAPIClientTest {
     }
 
     @Test
+    public void testDatasetAPI_getDataset_unauthorised() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 401
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_UNAUTHORIZED);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When getDataset is called
+        // Then the expected exception is thrown
+        assertThrows(UnauthorisedException.class,
+                () -> datasetAPIClient.getDataset(datasetID));
+    }
+
+    @Test
     public void testDatasetAPI_getDataset_emptyDatasetID() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
@@ -315,6 +332,42 @@ public class DatasetAPIClientTest {
         // When updateDataset is called
         // Then the expected exception is thrown
         assertThrows(DatasetNotFoundException.class,
+                () -> datasetAPIClient.updateDataset(datasetID, dataset));
+    }
+
+    @Test
+    public void testDatasetAPI_updateDataset_unauthorised() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 401
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_UNAUTHORIZED);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        Dataset dataset = new Dataset();
+
+        // When updateDataset is called
+        // Then the expected exception is thrown
+        assertThrows(UnauthorisedException.class,
+                () -> datasetAPIClient.updateDataset(datasetID, dataset));
+    }
+
+    @Test
+    public void testDatasetAPI_updateDataset_badRequest() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 400
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_BAD_REQUEST);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        Dataset dataset = new Dataset();
+
+        // When updateDataset is called
+        // Then the expected exception is thrown
+        assertThrows(BadRequestException.class,
                 () -> datasetAPIClient.updateDataset(datasetID, dataset));
     }
 
@@ -470,6 +523,22 @@ public class DatasetAPIClientTest {
     }
 
     @Test
+    public void testDatasetAPI_getDatasetVersion_unauthorised() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 401
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_UNAUTHORIZED);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When getDatasetVersion is called
+        // Then the expected exception is thrown
+        assertThrows(UnauthorisedException.class,
+                () -> datasetAPIClient.getDatasetVersion(datasetID, edition, version));
+    }
+
+    @Test
     public void testDatasetAPI_getDatasetVersion_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
@@ -558,6 +627,24 @@ public class DatasetAPIClientTest {
         // When updateDatasetVersion is called
         // Then the expected exception is thrown
         assertThrows(DatasetNotFoundException.class,
+                () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
+    }
+
+    @Test
+    public void testDatasetAPI_updateDatasetVersion_unauthorised() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+
+        // Given a request to the dataset API that returns a 401
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.SC_UNAUTHORIZED);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        DatasetVersion datasetVersion = createDatasetVersion();
+
+        // When getDatasetVersion is called
+        // Then the expected exception is thrown
+        assertThrows(UnauthorisedException.class,
                 () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
     }
 
