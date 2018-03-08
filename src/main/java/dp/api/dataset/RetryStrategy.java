@@ -11,11 +11,11 @@ import org.apache.http.protocol.HttpContext;
 public class RetryStrategy implements ServiceUnavailableRetryStrategy {
 
     private final int maxRetries;
-    private final long retryInterval;
+    private final long retryIntervalMs;
 
-    public RetryStrategy(int maxRetries, long retryInterval) {
+    public RetryStrategy(int maxRetries, long retryIntervalMs) {
         this.maxRetries = maxRetries;
-        this.retryInterval = retryInterval;
+        this.retryIntervalMs = retryIntervalMs;
     }
 
     public RetryStrategy() {
@@ -30,6 +30,6 @@ public class RetryStrategy implements ServiceUnavailableRetryStrategy {
 
     @Override
     public long getRetryInterval() {
-        return retryInterval;
+        return retryIntervalMs;
     }
 }
