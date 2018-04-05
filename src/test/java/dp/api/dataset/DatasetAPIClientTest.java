@@ -41,9 +41,11 @@ public class DatasetAPIClientTest {
     private static final ObjectMapper json = new ObjectMapper();
 
     private static final String authTokenHeaderName = "Internal-token";
+    private static final String serviceTokenHeaderName = "Authorization";
 
     private static final String datasetAPIURL = "";
     private static final String datasetAPIAuthToken = "12345";
+    private static final String serviceAuthToken = "67856";
     private static final String instanceID = "123";
     private static final String datasetID = "321";
     private static final String datasetTitle = "the dataset title";
@@ -61,14 +63,14 @@ public class DatasetAPIClientTest {
         // When a new DatasetAPIClient is created
         // Then the expected exception is thrown
         assertThrows(URISyntaxException.class,
-                () -> new DatasetAPIClient(invalidURI, datasetAPIAuthToken, mockHttpClient));
+                () -> new DatasetAPIClient(invalidURI, datasetAPIAuthToken, serviceAuthToken, mockHttpClient));
     }
 
     @Test
     public void testDatasetAPI_createDataset() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a new dataset
         Dataset dataset = createDataset();
@@ -88,6 +90,10 @@ public class DatasetAPIClientTest {
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
         assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
 
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+
         // Then the request should contain the provided dataset in the body
         String body = IOUtils.toString(httpRequest.getEntity().getContent());
         Dataset requestDataset = json.readValue(body, Dataset.class);
@@ -105,7 +111,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_createDataset_unknownResponseFields() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a mock dataset API response that has unknown fields (fields that are not defined in the model)
 
@@ -129,7 +135,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_createDataset_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 500
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -147,7 +153,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_createDataset_unauthorised() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 401
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_UNAUTHORIZED);
@@ -165,7 +171,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_createDataset_forbidden() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 403
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_FORBIDDEN);
@@ -183,7 +189,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_createDataset_emptyDatasetID() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty dataset ID
         String datasetID = "";
@@ -199,7 +205,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDataset() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a mock dataset response from the dataset API
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_OK);
@@ -219,6 +225,10 @@ public class DatasetAPIClientTest {
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
         assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
 
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+
         // Then the response should be whats returned from the dataset API
         assertThat(actualDataset.getId()).isEqualTo(expectedDataset.getId());
         assertThat(actualDataset.getTitle()).isEqualTo(expectedDataset.getTitle());
@@ -228,7 +238,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDataset_datasetNotFound() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 404
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_NOT_FOUND);
@@ -244,7 +254,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDataset_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 500
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -260,7 +270,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDataset_unauthorised() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 401
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_UNAUTHORIZED);
@@ -276,7 +286,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDataset_emptyDatasetID() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty dataset ID
         String datasetID = "";
@@ -291,7 +301,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDataset() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an updated dataset
         Dataset dataset = createDataset();
@@ -308,6 +318,10 @@ public class DatasetAPIClientTest {
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
         assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
 
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+
         // Then the request should contain the provided dataset in the body
         String body = IOUtils.toString(httpRequest.getEntity().getContent());
         Dataset requestDataset = json.readValue(body, Dataset.class);
@@ -320,7 +334,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDataset_datasetNotFound() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 404
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_NOT_FOUND);
@@ -338,7 +352,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDataset_unauthorised() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 401
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_UNAUTHORIZED);
@@ -356,7 +370,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDataset_badRequest() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 400
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_BAD_REQUEST);
@@ -374,7 +388,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDataset_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 500
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -392,7 +406,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDataset_emptyDatasetID() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty dataset ID
         String datasetID = "";
@@ -408,7 +422,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getInstance() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a mock dataset response from the dataset API
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_OK);
@@ -427,6 +441,10 @@ public class DatasetAPIClientTest {
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
         assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
 
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+
         // Then the response should be whats returned from the dataset API
         assertThat(actualInstance.getId()).isEqualTo(expectedInstance.getId());
     }
@@ -435,7 +453,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getInstance_instanceNotFound() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 404
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_NOT_FOUND);
@@ -451,7 +469,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getInstance_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 500
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -467,7 +485,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getInstance_emptyInstanceID() throws URISyntaxException {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty instance ID
         String instanceID = "";
@@ -482,7 +500,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDatasetVersion() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a mock dataset response from the dataset API
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_OK);
@@ -501,6 +519,10 @@ public class DatasetAPIClientTest {
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
         assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
 
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+
         // Then the response should be whats returned from the dataset API
         assertThat(actualDatasetVersion.getId()).isEqualTo(expectedVersion.getId());
     }
@@ -509,7 +531,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDatasetVersion_datasetNotFound() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 404
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_NOT_FOUND);
@@ -525,7 +547,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDatasetVersion_unauthorised() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 401
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_UNAUTHORIZED);
@@ -541,7 +563,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDatasetVersion_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 500
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -557,7 +579,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDatasetVersion_emptyDatasetID() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty dataset ID
         String datasetID = "";
@@ -572,7 +594,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDatasetVersion_emptyEdition() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty edition
         String edition = "";
@@ -587,7 +609,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDatasetVersion() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an updated dataset
         DatasetVersion datasetVersion = createDatasetVersion();
@@ -604,6 +626,10 @@ public class DatasetAPIClientTest {
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
         assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
 
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+
         // Then the request should contain the provided dataset version in the body
         String body = IOUtils.toString(httpRequest.getEntity().getContent());
         DatasetVersion requestDatasetVersion = json.readValue(body, DatasetVersion.class);
@@ -615,7 +641,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDatasetVersion_datasetNotFound() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 404
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_NOT_FOUND);
@@ -633,7 +659,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDatasetVersion_unauthorised() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 401
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_UNAUTHORIZED);
@@ -651,7 +677,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDatasetVersion_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 500
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -669,7 +695,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_getDatasetVersion_emptyVersion() throws URISyntaxException {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty version
         String version = "";
@@ -684,7 +710,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDatasetVersion_emptyDatasetID() throws URISyntaxException {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty dataset ID
         String datasetID = "";
@@ -700,7 +726,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDatasetVersion_emptyEdition() throws URISyntaxException {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty edition
         String edition = "";
@@ -716,7 +742,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_updateDatasetVersion_emptyVersion() throws URISyntaxException {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty version
         String version = "";
@@ -732,7 +758,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_deleteDataset() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a mock dataset response from the dataset API
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_NO_CONTENT);
@@ -746,13 +772,17 @@ public class DatasetAPIClientTest {
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
         assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
     }
 
     @Test
     public void testDatasetAPI_deleteDataset_internalError() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given a request to the dataset API that returns a 500
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -768,7 +798,7 @@ public class DatasetAPIClientTest {
     public void testDatasetAPI_deleteDataset_emptyDatasetID() throws Exception {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetAPIClient datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // Given an empty dataset ID
         String datasetID = "";
@@ -784,13 +814,17 @@ public class DatasetAPIClientTest {
 
         // Given a dataset API client implements closable
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        Closeable datasetAPIClient = new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, mockHttpClient);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
         // When close is called
         datasetAPIClient.close();
 
         // Then close is called on the underlying httpClient
         verify(mockHttpClient, times(1)).close();
+    }
+
+    private DatasetClient getDatasetClient(CloseableHttpClient mockHttpClient) throws URISyntaxException {
+        return new DatasetAPIClient(datasetAPIURL, datasetAPIAuthToken, serviceAuthToken, mockHttpClient);
     }
 
     private DatasetResponse mockDatasetResponse(CloseableHttpResponse mockHttpResponse) throws JsonProcessingException, UnsupportedEncodingException {

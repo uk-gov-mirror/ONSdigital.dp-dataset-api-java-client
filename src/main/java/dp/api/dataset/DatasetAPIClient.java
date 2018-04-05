@@ -40,10 +40,12 @@ public class DatasetAPIClient implements DatasetClient {
 
     private final URI datasetAPIURL;
     private final String datasetAPIAuthToken;
+    private final String serviceAuthToken;
 
     private final CloseableHttpClient client;
 
     private static final String authTokenHeaderName = "Internal-token";
+    private static final String serviceTokenHeaderName = "Authorization";
     private static final ObjectMapper json = new ObjectMapper();
 
     /**
@@ -53,11 +55,15 @@ public class DatasetAPIClient implements DatasetClient {
      * @param datasetAPIAuthToken - The authentication token for the dataset API
      * @param client              - The HTTP client to use internally
      */
-    public DatasetAPIClient(String datasetAPIURL, String datasetAPIAuthToken, CloseableHttpClient client) throws URISyntaxException {
+    public DatasetAPIClient(String datasetAPIURL,
+                            String datasetAPIAuthToken,
+                            String serviceAuthToken,
+                            CloseableHttpClient client) throws URISyntaxException {
 
         this.datasetAPIURL = new URI(datasetAPIURL);
         this.datasetAPIAuthToken = datasetAPIAuthToken;
         this.client = client;
+        this.serviceAuthToken = serviceAuthToken;
     }
 
     /**
@@ -66,9 +72,9 @@ public class DatasetAPIClient implements DatasetClient {
      * @param datasetAPIURL       - The URL of the dataset API
      * @param datasetAPIAuthToken - The authentication token for the dataset API
      */
-    public DatasetAPIClient(String datasetAPIURL, String datasetAPIAuthToken) throws URISyntaxException {
+    public DatasetAPIClient(String datasetAPIURL, String datasetAPIAuthToken, String serviceAuthToken) throws URISyntaxException {
 
-        this(datasetAPIURL, datasetAPIAuthToken, createDefaultHttpClient());
+        this(datasetAPIURL, datasetAPIAuthToken, serviceAuthToken, createDefaultHttpClient());
     }
 
     private static CloseableHttpClient createDefaultHttpClient() {
@@ -96,6 +102,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         HttpGet httpRequest = new HttpGet(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
         logRequest(httpRequest);
 
@@ -135,6 +142,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         HttpPost httpRequest = new HttpPost(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
         httpRequest.setHeader("Content-Type", "application/json");
 
         addBody(dataset, httpRequest);
@@ -179,6 +187,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         HttpGet httpRequest = new HttpGet(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
         logRequest(httpRequest);
 
@@ -210,6 +219,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         HttpDelete httpRequest = new HttpDelete(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
         logRequest(httpRequest);
 
@@ -246,6 +256,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         HttpPut httpRequest = new HttpPut(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
         httpRequest.setHeader("Content-Type", "application/json");
 
         addBody(dataset, httpRequest);
@@ -295,6 +306,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         HttpGet httpRequest = new HttpGet(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
         logRequest(httpRequest);
 
@@ -329,6 +341,7 @@ public class DatasetAPIClient implements DatasetClient {
 
         HttpPut httpRequest = new HttpPut(uri);
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
         httpRequest.setHeader("Content-Type", "application/json");
 
         addBody(datasetVersion, httpRequest);
