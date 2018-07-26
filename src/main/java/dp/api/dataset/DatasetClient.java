@@ -1,6 +1,9 @@
 package dp.api.dataset;
 
 import dp.api.dataset.exception.DatasetAPIException;
+import dp.api.dataset.exception.DatasetNotFoundException;
+import dp.api.dataset.exception.UnauthorisedException;
+import dp.api.dataset.exception.UnexpectedResponseException;
 import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetVersion;
 import dp.api.dataset.model.Instance;
@@ -39,6 +42,11 @@ public interface DatasetClient extends Closeable {
      * Get a particular version of a dataset.
      */
     DatasetVersion getDatasetVersion(String datasetID, String edition, String version) throws IOException, DatasetAPIException;
+
+    /**
+     *
+     */
+    void disassociateDataset(String datasetID, String edition, String version) throws IOException, UnexpectedResponseException, DatasetNotFoundException, UnauthorisedException;
 
     /**
      * Update the dataset version

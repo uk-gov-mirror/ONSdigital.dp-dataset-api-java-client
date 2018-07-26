@@ -318,6 +318,28 @@ public class DatasetAPIClient implements DatasetClient {
         }
     }
 
+    @Override
+    public void disassociateDataset(String datasetID, String edition, String version) throws IOException, UnexpectedResponseException, DatasetNotFoundException, UnauthorisedException {
+        validateDatasetID(datasetID);
+        validateEdition(edition);
+        validateVersion(version);
+
+        String path = String.format("/datasets/%s/editions/%s/versions/%s/collection", datasetID, edition, version);
+        URI uri = datasetAPIURL.resolve(path);
+
+        HttpDelete request = new HttpDelete(uri);
+        request.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        request.addHeader(serviceTokenHeaderName, serviceAuthToken);
+
+        logRequest(request);
+
+        try (CloseableHttpResponse response = client.execute(request)) {
+
+            logResponse(request, response);
+            validate200ResponseCode(request, response);
+        }
+    }
+
     /**
      * Update the dataset version
      *
