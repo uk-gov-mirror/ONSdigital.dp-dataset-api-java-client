@@ -2,6 +2,7 @@ package dp.api.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.onsdigital.logging.v2.event.HTTP;
 import dp.api.dataset.exception.BadRequestException;
 import dp.api.dataset.exception.DatasetAPIException;
 import dp.api.dataset.exception.DatasetAlreadyExistsException;
@@ -32,6 +33,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
 
 /**
  * HTTP client for the dataset API.
@@ -191,13 +194,18 @@ public class DatasetAPIClient implements DatasetClient {
 
         logRequest(httpRequest);
 
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
-
-            logResponse(httpRequest, response);
+        CloseableHttpResponse response = null;
+        try {
+            response = client.execute(httpRequest);
             validate200ResponseCode(httpRequest, response);
 
             DatasetResponse datasetResponse = parseResponseBody(response, DatasetResponse.class);
             return datasetResponse.getNext();
+        } finally {
+            if (null != response) {
+                response.close();
+                info().endHTTP(response.getStatusLine().getStatusCode());
+            }
         }
     }
 
@@ -398,13 +406,15 @@ public class DatasetAPIClient implements DatasetClient {
         return str != null && str.length() > 0;
     }
 
-    private void logRequest(HttpRequestBase httpRequest) {
+    private void logRequest(HttpRequestBase req) {
+        HTTP http = new HTTP().setMethod(req.getMethod())
+                .setPath(req.getURI().getPath())
+                .setQuery(req.getURI().getQuery())
+                .setScheme(req.getURI().getScheme())
+                .setHost(req.getURI().getHost())
+                .setPort(req.getURI().getPort());
 
-        new LogBuilder("Calling dataset API")
-                .addParameter("method", httpRequest.getMethod())
-                .addParameter("uri", httpRequest.getURI())
-                .log();
-
+        info().beginHTTP(http, "").log("sending request to dataset-api");
     }
 
     private void logResponse(HttpRequestBase httpRequest, CloseableHttpResponse response) {

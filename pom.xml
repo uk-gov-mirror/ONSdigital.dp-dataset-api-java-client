@@ -39,7 +39,8 @@
         <dependency>
             <groupId>com.github.ONSdigital</groupId>
             <artifactId>dp-logging</artifactId>
-            <version>master-25d3e73a4c-1</version>
+            <!--<version>master-25d3e73a4c-1</version>-->
+            <version>feature~extendable-f2c89d51db-1</version>
         </dependency>
 
         <dependency>
