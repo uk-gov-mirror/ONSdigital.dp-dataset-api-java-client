@@ -39,8 +39,7 @@
         <dependency>
             <groupId>com.github.ONSdigital</groupId>
             <artifactId>dp-logging</artifactId>
-            <!--<version>master-25d3e73a4c-1</version>-->
-            <version>feature~sethttp-SNAPSHOT</version>
+            <version>release~1.1.0</version>
             <scope>provided</scope>
         </dependency>
 
