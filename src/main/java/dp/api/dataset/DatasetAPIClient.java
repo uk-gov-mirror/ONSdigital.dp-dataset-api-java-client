@@ -103,24 +103,24 @@ public class DatasetAPIClient implements DatasetClient {
         String path = "/instances/" + instanceID;
         URI uri = datasetAPIURL.resolve(path);
 
-        HttpGet httpRequest = new HttpGet(uri);
-        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
-        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
+        HttpGet req = new HttpGet(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
-        logRequest(httpRequest);
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
 
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
+        try (CloseableHttpResponse response = client.execute(req)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            info().endHTTP(statusCode).log("request complete");
 
-            logResponse(httpRequest, response);
-
-            switch (response.getStatusLine().getStatusCode()) {
+            switch (statusCode) {
                 case HttpStatus.SC_OK:
                     return parseResponseBody(response, Instance.class);
                 case HttpStatus.SC_NOT_FOUND:
-                    throw new InstanceNotFoundException(formatErrResponse(httpRequest, response));
+                    throw new InstanceNotFoundException(formatErrResponse(req, response));
                 default:
                     throw new UnexpectedResponseException(
-                            formatErrResponse(httpRequest, response),
+                            formatErrResponse(req, response),
                             response.getStatusLine().getStatusCode());
             }
         }
@@ -143,20 +143,20 @@ public class DatasetAPIClient implements DatasetClient {
         String path = "/datasets/" + datasetID;
         URI uri = datasetAPIURL.resolve(path);
 
-        HttpPost httpRequest = new HttpPost(uri);
-        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
-        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
-        httpRequest.setHeader("Content-Type", "application/json");
+        HttpPost req = new HttpPost(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
+        req.setHeader("Content-Type", "application/json");
 
-        addBody(dataset, httpRequest);
+        addBody(dataset, req);
 
-        logRequest(httpRequest);
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
+        try (CloseableHttpResponse response = client.execute(req)) {
 
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            info().endHTTP(statusCode).log("request complete");
 
-            logResponse(httpRequest, response);
-
-            switch (response.getStatusLine().getStatusCode()) {
+            switch (statusCode) {
                 case HttpStatus.SC_CREATED:
                     DatasetResponse datasetResponse = parseResponseBody(response, DatasetResponse.class);
                     return datasetResponse.getNext();
@@ -166,7 +166,7 @@ public class DatasetAPIClient implements DatasetClient {
                     throw new DatasetAlreadyExistsException();
                 default:
                     throw new UnexpectedResponseException(
-                            formatErrResponse(httpRequest, response),
+                            formatErrResponse(req, response),
                             response.getStatusLine().getStatusCode());
             }
         }
@@ -188,14 +188,15 @@ public class DatasetAPIClient implements DatasetClient {
         String path = "/datasets/" + datasetID;
         URI uri = datasetAPIURL.resolve(path);
 
-        HttpGet httpRequest = new HttpGet(uri);
-        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
-        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
+        HttpGet req = new HttpGet(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
-        info().beginHTTP(getHTTP(httpRequest), "").log("sending request to dataset-api");
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
 
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
-            validate200ResponseCode(httpRequest, response);
+        try (CloseableHttpResponse response = client.execute(req)) {
+            info().endHTTP(response.getStatusLine().getStatusCode()).log("request completed");
+            validate200ResponseCode(req, response);
             DatasetResponse datasetResponse = parseResponseBody(response, DatasetResponse.class);
             return datasetResponse.getNext();
         }
@@ -217,21 +218,23 @@ public class DatasetAPIClient implements DatasetClient {
         String path = "/datasets/" + datasetID;
         URI uri = datasetAPIURL.resolve(path);
 
-        HttpDelete httpRequest = new HttpDelete(uri);
-        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
-        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
+        HttpDelete req = new HttpDelete(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
-        logRequest(httpRequest);
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
 
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
+        try (CloseableHttpResponse response = client.execute(req)) {
 
-            logResponse(httpRequest, response);
-            switch (response.getStatusLine().getStatusCode()) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            info().endHTTP(statusCode).log("request complete");
+
+            switch (statusCode) {
                 case HttpStatus.SC_NO_CONTENT:
                     return;
                 default:
                     throw new UnexpectedResponseException(
-                            formatErrResponse(httpRequest, response),
+                            formatErrResponse(req, response),
                             response.getStatusLine().getStatusCode());
             }
         }
@@ -254,31 +257,31 @@ public class DatasetAPIClient implements DatasetClient {
         String path = "/datasets/" + datasetID;
         URI uri = datasetAPIURL.resolve(path);
 
-        HttpPut httpRequest = new HttpPut(uri);
-        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
-        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
-        httpRequest.setHeader("Content-Type", "application/json");
+        HttpPut req = new HttpPut(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
+        req.setHeader("Content-Type", "application/json");
 
-        addBody(dataset, httpRequest);
+        addBody(dataset, req);
 
-        logRequest(httpRequest);
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
+        try (CloseableHttpResponse response = client.execute(req)) {
 
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            info().endHTTP(statusCode).log("request complete");
 
-            logResponse(httpRequest, response);
-
-            switch (response.getStatusLine().getStatusCode()) {
+            switch (statusCode) {
                 case HttpStatus.SC_OK:
                     return;
                 case HttpStatus.SC_NOT_FOUND:
-                    throw new DatasetNotFoundException(formatErrResponse(httpRequest, response));
+                    throw new DatasetNotFoundException(formatErrResponse(req, response));
                 case HttpStatus.SC_UNAUTHORIZED:
                     throw new UnauthorisedException();
                 case HttpStatus.SC_BAD_REQUEST:
                     throw new BadRequestException("invalid dataset request");
                 default:
                     throw new UnexpectedResponseException(
-                            formatErrResponse(httpRequest, response),
+                            formatErrResponse(req, response),
                             response.getStatusLine().getStatusCode());
             }
         }
@@ -304,16 +307,16 @@ public class DatasetAPIClient implements DatasetClient {
         String path = String.format("/datasets/%s/editions/%s/versions/%s", datasetID, edition, version);
         URI uri = datasetAPIURL.resolve(path);
 
-        HttpGet httpRequest = new HttpGet(uri);
-        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
-        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
+        HttpGet req = new HttpGet(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
-        logRequest(httpRequest);
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
 
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
-
-            logResponse(httpRequest, response);
-            validate200ResponseCode(httpRequest, response);
+        try (CloseableHttpResponse response = client.execute(req)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            info().endHTTP(statusCode).log("request complete");
+            validate200ResponseCode(req, response);
             return parseResponseBody(response, DatasetVersion.class);
         }
     }
@@ -339,25 +342,22 @@ public class DatasetAPIClient implements DatasetClient {
         String path = String.format("/datasets/%s/editions/%s/versions/%s", datasetID, edition, version);
         URI uri = datasetAPIURL.resolve(path);
 
-        HttpPut httpRequest = new HttpPut(uri);
-        httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
-        httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
-        httpRequest.setHeader("Content-Type", "application/json");
+        HttpPut req = new HttpPut(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
+        req.setHeader("Content-Type", "application/json");
 
-        addBody(datasetVersion, httpRequest);
+        addBody(datasetVersion, req);
 
-        logRequest(httpRequest);
-
-        try (CloseableHttpResponse response = client.execute(httpRequest)) {
-
-            logResponse(httpRequest, response);
-            validate200ResponseCode(httpRequest, response);
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
+        try (CloseableHttpResponse response = client.execute(req)) {
+            info().endHTTP(response.getStatusLine().getStatusCode()).log("request compelet");
+            validate200ResponseCode(req, response);
         }
     }
 
-    private void validate200ResponseCode(HttpRequestBase httpRequest, CloseableHttpResponse response) throws DatasetNotFoundException, UnexpectedResponseException, UnauthorisedException {
-        info().endHTTP(response.getStatusLine().getStatusCode()).log("request completed");
-
+    private void validate200ResponseCode(HttpRequestBase httpRequest, CloseableHttpResponse response)
+            throws DatasetNotFoundException, UnexpectedResponseException, UnauthorisedException {
         switch (response.getStatusLine().getStatusCode()) {
             case HttpStatus.SC_OK:
                 return;
@@ -407,26 +407,6 @@ public class DatasetAPIClient implements DatasetClient {
                 .setScheme(req.getURI().getScheme())
                 .setHost(req.getURI().getHost())
                 .setPort(req.getURI().getPort());
-    }
-
-    private void logRequest(HttpRequestBase req) {
-        HTTP http = new HTTP().setMethod(req.getMethod())
-                .setPath(req.getURI().getPath())
-                .setQuery(req.getURI().getQuery())
-                .setScheme(req.getURI().getScheme())
-                .setHost(req.getURI().getHost())
-                .setPort(req.getURI().getPort());
-
-        info().beginHTTP(http, "").log("sending request to dataset-api");
-    }
-
-    private void logResponse(HttpRequestBase httpRequest, CloseableHttpResponse response) {
-
-        new LogBuilder("dataset api response")
-                .addParameter("uri", httpRequest.getURI())
-                .addParameter("method", httpRequest.getMethod())
-                .addParameter("status", response.getStatusLine())
-                .log();
     }
 
     private <T> T parseResponseBody(CloseableHttpResponse response, Class<T> type) throws IOException {
