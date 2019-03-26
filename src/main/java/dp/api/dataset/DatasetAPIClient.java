@@ -192,20 +192,12 @@ public class DatasetAPIClient implements DatasetClient {
         httpRequest.addHeader(authTokenHeaderName, datasetAPIAuthToken);
         httpRequest.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
-        logRequest(httpRequest);
+        info().beginHTTP(getHTTP(httpRequest), "").log("sending request to dataset-api");
 
-        CloseableHttpResponse response = null;
-        try {
-            response = client.execute(httpRequest);
+        try (CloseableHttpResponse response = client.execute(httpRequest)) {
             validate200ResponseCode(httpRequest, response);
-
             DatasetResponse datasetResponse = parseResponseBody(response, DatasetResponse.class);
             return datasetResponse.getNext();
-        } finally {
-            if (null != response) {
-                response.close();
-                info().endHTTP(response.getStatusLine().getStatusCode());
-            }
         }
     }
 
@@ -364,6 +356,7 @@ public class DatasetAPIClient implements DatasetClient {
     }
 
     private void validate200ResponseCode(HttpRequestBase httpRequest, CloseableHttpResponse response) throws DatasetNotFoundException, UnexpectedResponseException, UnauthorisedException {
+        info().endHTTP(response.getStatusLine().getStatusCode()).log("request completed");
 
         switch (response.getStatusLine().getStatusCode()) {
             case HttpStatus.SC_OK:
@@ -404,6 +397,16 @@ public class DatasetAPIClient implements DatasetClient {
 
     private static boolean isNotEmpty(String str) {
         return str != null && str.length() > 0;
+    }
+
+
+    private HTTP getHTTP(HttpRequestBase req) {
+        return new HTTP().setMethod(req.getMethod())
+                .setPath(req.getURI().getPath())
+                .setQuery(req.getURI().getQuery())
+                .setScheme(req.getURI().getScheme())
+                .setHost(req.getURI().getHost())
+                .setPort(req.getURI().getPort());
     }
 
     private void logRequest(HttpRequestBase req) {
