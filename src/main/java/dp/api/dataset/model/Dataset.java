@@ -27,6 +27,9 @@ public class Dataset {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String uri;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String description;
+
     public String getId() {
         return id;
     }
@@ -73,6 +76,14 @@ public class Dataset {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 
