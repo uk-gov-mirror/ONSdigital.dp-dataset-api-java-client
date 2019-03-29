@@ -31,6 +31,11 @@ public interface DatasetClient extends Closeable {
     void deleteDataset(String datasetID) throws IOException, DatasetAPIException;
 
     /**
+     * Detach the given version for the given edition for given dataset ID.
+     */
+    void detachVersion(String datasetID, String version, String edition) throws IOException, DatasetAPIException;
+
+    /**
      * Update the dataset for the given dataset ID with the given dataset instance data.
      */
     void updateDataset(String datasetID, Dataset dataset) throws IOException, DatasetAPIException;

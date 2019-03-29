@@ -241,6 +241,40 @@ public class DatasetAPIClient implements DatasetClient {
     }
 
     /**
+     * Detach the given version for the given edition for given dataset ID.
+     *
+     * @param datasetID
+     * @param edition
+     * @param version
+     * @return
+     * @throws IOException
+     * @throws DatasetAPIException
+     */
+    @Override
+    public void detachVersion(String datasetID, String version, String edition) throws IOException, DatasetAPIException {
+
+        validateDatasetID(datasetID);
+        validateEdition(edition);
+        validateVersion(version);
+
+        String path = String.format("/datasets/%s/editions/%s/versions/%s", datasetID, edition, version);
+        URI uri = datasetAPIURL.resolve(path);
+
+        HttpDelete req = new HttpDelete(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
+
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
+
+        try (CloseableHttpResponse response = client.execute(req)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            info().endHTTP(statusCode).log("request complete");
+            validate200ResponseCode(req, response);
+        }
+    }
+
+
+    /**
      * Update the dataset for the given dataset ID with the given dataset instance data.
      *
      * @param datasetID
