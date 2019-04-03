@@ -251,7 +251,7 @@ public class DatasetAPIClient implements DatasetClient {
      * @throws DatasetAPIException
      */
     @Override
-    public void detachVersion(String datasetID, String version, String edition) throws IOException, DatasetAPIException {
+    public void detachVersion(String datasetID, String edition, String version) throws IOException, DatasetAPIException {
 
         validateDatasetID(datasetID);
         validateEdition(edition);
