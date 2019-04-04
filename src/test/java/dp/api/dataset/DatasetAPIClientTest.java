@@ -691,8 +691,83 @@ public class DatasetAPIClientTest {
                 () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
     }
 
+
     @Test
-    public void testDatasetAPI_getDatasetVersion_emptyVersion() throws URISyntaxException {
+    public void testDatasetAPI_detachVersion() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
+
+        // Given a mock dataset response from the dataset API
+        CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_OK);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When deleteDataset is called
+        datasetAPIClient.detachVersion(datasetID, version, edition);
+
+        HttpRequestBase httpRequest = captureHttpRequest(mockHttpClient);
+
+        // Then the request should contain the authentication header
+        String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
+        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+
+        // Then the request should contain the service token header
+        String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
+        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+    }
+
+
+    @Test
+    public void testDatasetAPI_detachVersion_internalError() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
+
+        // Given a request to the dataset API that returns a 500
+        CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When getDataset is called
+        // Then the expected exception is thrown
+        assertThrows(UnexpectedResponseException.class,
+                () -> datasetAPIClient.detachVersion(datasetID, version, edition));
+    }
+
+    @Test
+    public void testDatasetAPI_detachVersion_unauthorised() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
+
+        // Given a request to the dataset API that returns a 401
+        CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_UNAUTHORIZED);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When getDataset is called
+        // Then the expected exception is thrown
+        assertThrows(UnauthorisedException.class,
+                () -> datasetAPIClient.detachVersion(datasetID, version, edition));
+    }
+
+
+    @Test
+    public void testDatasetAPI_detachVersion_emptyDatasetID() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
+
+        // Given an empty dataset ID
+        String datasetID = "";
+
+        // When updateDataset is called
+        // Then the expected exception is thrown
+        assertThrows(IllegalArgumentException.class,
+                () -> datasetAPIClient.detachVersion(datasetID, version, edition));
+    }
+
+
+    @Test
+    public void testDatasetAPI_detachVersion_emptyVersion() throws URISyntaxException {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
         DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
@@ -703,27 +778,12 @@ public class DatasetAPIClientTest {
         // When getDatasetVersion is called
         // Then the expected exception is thrown
         assertThrows(IllegalArgumentException.class,
-                () -> datasetAPIClient.getDatasetVersion(datasetID, edition, version));
+                () -> datasetAPIClient.detachVersion(datasetID, version, edition));
     }
 
-    @Test
-    public void testDatasetAPI_updateDatasetVersion_emptyDatasetID() throws URISyntaxException {
-
-        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
-
-        // Given an empty dataset ID
-        String datasetID = "";
-        DatasetVersion datasetVersion = new DatasetVersion();
-
-        // When updateDatasetVersion is called
-        // Then the expected exception is thrown
-        assertThrows(IllegalArgumentException.class,
-                () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
-    }
 
     @Test
-    public void testDatasetAPI_updateDatasetVersion_emptyEdition() throws URISyntaxException {
+    public void testDatasetAPI_detachVersion_emptyEdition() throws URISyntaxException {
 
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
         DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
@@ -735,24 +795,9 @@ public class DatasetAPIClientTest {
         // When updateDatasetVersion is called
         // Then the expected exception is thrown
         assertThrows(IllegalArgumentException.class,
-                () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
+                () -> datasetAPIClient.detachVersion(datasetID, version, edition));
     }
 
-    @Test
-    public void testDatasetAPI_updateDatasetVersion_emptyVersion() throws URISyntaxException {
-
-        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
-        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
-
-        // Given an empty version
-        String version = "";
-        DatasetVersion datasetVersion = new DatasetVersion();
-
-        // When updateDatasetVersion is called
-        // Then the expected exception is thrown
-        assertThrows(IllegalArgumentException.class,
-                () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
-    }
 
     @Test
     public void testDatasetAPI_deleteDataset() throws Exception {
