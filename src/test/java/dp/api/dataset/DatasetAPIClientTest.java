@@ -691,7 +691,6 @@ public class DatasetAPIClientTest {
                 () -> datasetAPIClient.updateDatasetVersion(datasetID, edition, version, datasetVersion));
     }
 
-
     @Test
     public void testDatasetAPI_detachVersion() throws Exception {
 
@@ -702,7 +701,7 @@ public class DatasetAPIClientTest {
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_OK);
         when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
 
-        // When deleteDataset is called
+        // When detachVersion is called
         datasetAPIClient.detachVersion(datasetID, version, edition);
 
         HttpRequestBase httpRequest = captureHttpRequest(mockHttpClient);
@@ -716,7 +715,6 @@ public class DatasetAPIClientTest {
         assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
     }
 
-
     @Test
     public void testDatasetAPI_detachVersion_internalError() throws Exception {
 
@@ -727,7 +725,7 @@ public class DatasetAPIClientTest {
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
 
-        // When getDataset is called
+        // When detachVersion is called
         // Then the expected exception is thrown
         assertThrows(UnexpectedResponseException.class,
                 () -> datasetAPIClient.detachVersion(datasetID, version, edition));
@@ -743,12 +741,11 @@ public class DatasetAPIClientTest {
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_UNAUTHORIZED);
         when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
 
-        // When getDataset is called
+        // When detachVersion is called
         // Then the expected exception is thrown
         assertThrows(UnauthorisedException.class,
                 () -> datasetAPIClient.detachVersion(datasetID, version, edition));
     }
-
 
     @Test
     public void testDatasetAPI_detachVersion_emptyDatasetID() throws Exception {
@@ -759,12 +756,11 @@ public class DatasetAPIClientTest {
         // Given an empty dataset ID
         String datasetID = "";
 
-        // When updateDataset is called
+        // When detachVersion is called
         // Then the expected exception is thrown
         assertThrows(IllegalArgumentException.class,
                 () -> datasetAPIClient.detachVersion(datasetID, version, edition));
     }
-
 
     @Test
     public void testDatasetAPI_detachVersion_emptyVersion() throws URISyntaxException {
@@ -775,12 +771,11 @@ public class DatasetAPIClientTest {
         // Given an empty version
         String version = "";
 
-        // When getDatasetVersion is called
+        // When detachVersion is called
         // Then the expected exception is thrown
         assertThrows(IllegalArgumentException.class,
                 () -> datasetAPIClient.detachVersion(datasetID, version, edition));
     }
-
 
     @Test
     public void testDatasetAPI_detachVersion_emptyEdition() throws URISyntaxException {
@@ -790,14 +785,12 @@ public class DatasetAPIClientTest {
 
         // Given an empty edition
         String edition = "";
-        DatasetVersion datasetVersion = new DatasetVersion();
 
-        // When updateDatasetVersion is called
+        // When detachVersion is called
         // Then the expected exception is thrown
         assertThrows(IllegalArgumentException.class,
                 () -> datasetAPIClient.detachVersion(datasetID, version, edition));
     }
-
 
     @Test
     public void testDatasetAPI_deleteDataset() throws Exception {
