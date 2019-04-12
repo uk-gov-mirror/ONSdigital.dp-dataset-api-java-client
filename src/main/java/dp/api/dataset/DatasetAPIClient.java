@@ -3,13 +3,7 @@ package dp.api.dataset;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.onsdigital.logging.v2.event.HTTP;
-import dp.api.dataset.exception.BadRequestException;
-import dp.api.dataset.exception.DatasetAPIException;
-import dp.api.dataset.exception.DatasetAlreadyExistsException;
-import dp.api.dataset.exception.DatasetNotFoundException;
-import dp.api.dataset.exception.InstanceNotFoundException;
-import dp.api.dataset.exception.UnauthorisedException;
-import dp.api.dataset.exception.UnexpectedResponseException;
+import dp.api.dataset.exception.*;
 import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetResponse;
 import dp.api.dataset.model.DatasetVersion;
@@ -268,8 +262,14 @@ public class DatasetAPIClient implements DatasetClient {
 
         try (CloseableHttpResponse response = client.execute(req)) {
             int statusCode = response.getStatusLine().getStatusCode();
-            info().endHTTP(statusCode).log("request complete");
-            validate200ResponseCode(req, response);
+
+            switch (statusCode) {
+                case HttpStatus.SC_FORBIDDEN:
+                    throw new ForbiddenException();
+                default:
+                    info().endHTTP(statusCode).log("request complete");
+                    validate200ResponseCode(req, response);
+            }
         }
     }
 

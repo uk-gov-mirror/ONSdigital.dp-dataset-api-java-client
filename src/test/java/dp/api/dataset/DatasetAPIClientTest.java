@@ -2,12 +2,7 @@ package dp.api.dataset;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dp.api.dataset.exception.BadRequestException;
-import dp.api.dataset.exception.DatasetAlreadyExistsException;
-import dp.api.dataset.exception.DatasetNotFoundException;
-import dp.api.dataset.exception.InstanceNotFoundException;
-import dp.api.dataset.exception.UnauthorisedException;
-import dp.api.dataset.exception.UnexpectedResponseException;
+import dp.api.dataset.exception.*;
 import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetResponse;
 import dp.api.dataset.model.DatasetVersion;
@@ -744,6 +739,22 @@ public class DatasetAPIClientTest {
         // When detachVersion is called
         // Then the expected exception is thrown
         assertThrows(UnauthorisedException.class,
+                () -> datasetAPIClient.detachVersion(datasetID, version, edition));
+    }
+
+    @Test
+    public void testDatasetAPI_detachVersion_forbidden() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
+
+        // Given a request to the dataset API that returns a 401
+        CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_FORBIDDEN);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When detachVersion is called
+        // Then the expected exception is thrown
+        assertThrows(ForbiddenException.class,
                 () -> datasetAPIClient.detachVersion(datasetID, version, edition));
     }
 
