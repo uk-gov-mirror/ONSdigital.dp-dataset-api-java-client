@@ -271,7 +271,7 @@ public class DatasetAPIClient implements DatasetClient {
             int statusCode = response.getStatusLine().getStatusCode();
             info().endHTTP(statusCode).log("request complete");
             validate200ResponseCode(req, response);
-         }
+        }
     }
 
 
