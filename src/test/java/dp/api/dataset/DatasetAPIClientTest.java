@@ -754,7 +754,7 @@ public class DatasetAPIClientTest {
         CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
         DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
 
-        // Given a request to the dataset API that returns a 401
+        // Given a request to the dataset API that returns a 403
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_FORBIDDEN);
         when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
 
@@ -861,6 +861,22 @@ public class DatasetAPIClientTest {
         // When updateDataset is called
         // Then the expected exception is thrown
         assertThrows(IllegalArgumentException.class,
+                () -> datasetAPIClient.deleteDataset(datasetID));
+    }
+
+    @Test
+    public void testDatasetAPI_deleteDataset_forbidden() throws Exception {
+
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
+        DatasetClient datasetAPIClient = getDatasetClient(mockHttpClient);
+
+        // Given a request to the dataset API that returns a 403
+        CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_FORBIDDEN);
+        when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
+
+        // When detachVersion is called
+        // Then the expected exception is thrown
+        assertThrows(ForbiddenException.class,
                 () -> datasetAPIClient.deleteDataset(datasetID));
     }
 

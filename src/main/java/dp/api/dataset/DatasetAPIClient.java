@@ -234,9 +234,7 @@ public class DatasetAPIClient implements DatasetClient {
                 case HttpStatus.SC_NO_CONTENT:
                     return;
                 default:
-                    throw new UnexpectedResponseException(
-                            formatErrResponse(req, response),
-                            response.getStatusLine().getStatusCode());
+                    validate200ResponseCode(req, response);
             }
         }
     }
