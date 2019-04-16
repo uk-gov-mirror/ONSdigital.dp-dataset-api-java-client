@@ -874,7 +874,7 @@ public class DatasetAPIClientTest {
         CloseableHttpResponse mockHttpResponse = MockHttp.response(HttpStatus.SC_FORBIDDEN);
         when(mockHttpClient.execute(any(HttpRequestBase.class))).thenReturn(mockHttpResponse);
 
-        // When detachVersion is called
+        // When deleteDataset is called
         // Then the expected exception is thrown
         assertThrows(ForbiddenException.class,
                 () -> datasetAPIClient.deleteDataset(datasetID));
