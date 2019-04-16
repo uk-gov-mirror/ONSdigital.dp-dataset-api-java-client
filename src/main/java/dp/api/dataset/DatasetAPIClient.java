@@ -271,7 +271,7 @@ public class DatasetAPIClient implements DatasetClient {
             int statusCode = response.getStatusLine().getStatusCode();
             info().endHTTP(statusCode).log("request complete");
             validate200ResponseCode(req, response);
-            }
+         }
     }
 
 
@@ -308,8 +308,6 @@ public class DatasetAPIClient implements DatasetClient {
             switch (statusCode) {
                 case HttpStatus.SC_OK:
                     return;
-                case HttpStatus.SC_FORBIDDEN:
-                    throw new ForbiddenException();
                 case HttpStatus.SC_NOT_FOUND:
                     throw new DatasetNotFoundException(formatErrResponse(req, response));
                 case HttpStatus.SC_UNAUTHORIZED:
