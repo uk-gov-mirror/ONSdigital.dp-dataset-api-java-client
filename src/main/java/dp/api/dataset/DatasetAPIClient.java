@@ -269,15 +269,9 @@ public class DatasetAPIClient implements DatasetClient {
 
         try (CloseableHttpResponse response = client.execute(req)) {
             int statusCode = response.getStatusLine().getStatusCode();
-
-            switch (statusCode) {
-                case HttpStatus.SC_FORBIDDEN:
-                    throw new ForbiddenException();
-                default:
-                    info().endHTTP(statusCode).log("request complete");
-                    validate200ResponseCode(req, response);
+            info().endHTTP(statusCode).log("request complete");
+            validate200ResponseCode(req, response);
             }
-        }
     }
 
 
@@ -314,6 +308,8 @@ public class DatasetAPIClient implements DatasetClient {
             switch (statusCode) {
                 case HttpStatus.SC_OK:
                     return;
+                case HttpStatus.SC_FORBIDDEN:
+                    throw new ForbiddenException();
                 case HttpStatus.SC_NOT_FOUND:
                     throw new DatasetNotFoundException(formatErrResponse(req, response));
                 case HttpStatus.SC_UNAUTHORIZED:
@@ -398,10 +394,12 @@ public class DatasetAPIClient implements DatasetClient {
     }
 
     private void validate200ResponseCode(HttpRequestBase httpRequest, CloseableHttpResponse response)
-            throws DatasetNotFoundException, UnexpectedResponseException, UnauthorisedException {
+            throws DatasetNotFoundException, UnexpectedResponseException, UnauthorisedException, ForbiddenException {
         switch (response.getStatusLine().getStatusCode()) {
             case HttpStatus.SC_OK:
                 return;
+            case HttpStatus.SC_FORBIDDEN:
+                throw new ForbiddenException();
             case HttpStatus.SC_NOT_FOUND:
                 throw new DatasetNotFoundException(formatErrResponse(httpRequest, response));
             case HttpStatus.SC_UNAUTHORIZED:
