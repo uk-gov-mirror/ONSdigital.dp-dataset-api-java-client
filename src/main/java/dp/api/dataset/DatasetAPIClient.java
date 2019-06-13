@@ -365,7 +365,6 @@ public class DatasetAPIClient implements DatasetClient {
      * @throws IOException
      * @throws DatasetAPIException
      */
-    @Override
     public DatasetVersionMetadata getDatasetVersionMetadata(String datasetID, String edition, String version) throws IOException, DatasetAPIException {
 
         validateDatasetID(datasetID);

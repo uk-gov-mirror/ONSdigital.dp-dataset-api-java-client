@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DatasetVersion {
+public class DatasetVersionMetadata {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
@@ -27,7 +27,7 @@ public class DatasetVersion {
         return pageType;
     }
 
-    public void setDescription(String pageType) {
+    public void setPageType(String pageType) {
         this.pageType = pageType;
     }
 
@@ -35,7 +35,7 @@ public class DatasetVersion {
         return uri;
     }
 
-    public void setDescription(String uri) {
+    public void setUri(String uri) {
         this.uri = uri;
     }
 
