@@ -14,6 +14,7 @@ import dp.api.dataset.exception.DatasetAPIException;
 import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetResponse;
 import dp.api.dataset.model.DatasetVersion;
+import dp.api.dataset.model.DatasetVersionMetadata;
 import dp.api.dataset.model.Instance;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -351,6 +352,40 @@ public class DatasetAPIClient implements DatasetClient {
             info().endHTTP(statusCode).log("request complete");
             validate200ResponseCode(req, response);
             return parseResponseBody(response, DatasetVersion.class);
+        }
+    }
+
+    /**
+     * Get the metadata for a particular version of a dataset.
+     *
+     * @param datasetID
+     * @param edition
+     * @param version
+     * @return
+     * @throws IOException
+     * @throws DatasetAPIException
+     */
+    @Override
+    public DatasetVersionMetadata getDatasetVersionMetadata(String datasetID, String edition, String version) throws IOException, DatasetAPIException {
+
+        validateDatasetID(datasetID);
+        validateEdition(edition);
+        validateVersion(version);
+
+        String path = String.format("/datasets/%s/editions/%s/versions/%s/metadata", datasetID, edition, version);
+        URI uri = datasetAPIURL.resolve(path);
+
+        HttpGet req = new HttpGet(uri);
+        req.addHeader(authTokenHeaderName, datasetAPIAuthToken);
+        req.addHeader(serviceTokenHeaderName, serviceAuthToken);
+
+        info().beginHTTP(getHTTP(req)).log("making http request to dataset-api");
+
+        try (CloseableHttpResponse response = client.execute(req)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            info().endHTTP(statusCode).log("request complete");
+            validate200ResponseCode(req, response);
+            return parseResponseBody(response, DatasetVersionMetadata.class);
         }
     }
 
