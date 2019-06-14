@@ -10,6 +10,9 @@ public class DatasetMetadata {
     private String description;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String[] keywords;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String nationalStatistic;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,13 +30,13 @@ public class DatasetMetadata {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private DatasetContacts contact;
 
-    public String getDescription() {
-        return description;
-    }
+    public String getDescription() { return description; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDescription(String description) { this.description = description; }
+
+    public String[] getKeywords() { return keywords; }
+
+    public void setKeywords(String[] keywords) { this.keywords = keywords; }
 
     public String getNationalStatistic() {
         return nationalStatistic;
