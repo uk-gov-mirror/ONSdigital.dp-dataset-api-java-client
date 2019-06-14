@@ -14,7 +14,7 @@ import dp.api.dataset.exception.DatasetAPIException;
 import dp.api.dataset.model.Dataset;
 import dp.api.dataset.model.DatasetResponse;
 import dp.api.dataset.model.DatasetVersion;
-import dp.api.dataset.model.DatasetVersionMetadata;
+import dp.api.dataset.model.DatasetMetadata;
 import dp.api.dataset.model.Instance;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -365,7 +365,7 @@ public class DatasetAPIClient implements DatasetClient {
      * @throws IOException
      * @throws DatasetAPIException
      */
-    public DatasetVersionMetadata getDatasetVersionMetadata(String datasetID, String edition, String version) throws IOException, DatasetAPIException {
+    public DatasetMetadata getDatasetMetadata(String datasetID, String edition, String version) throws IOException, DatasetAPIException {
 
         validateDatasetID(datasetID);
         validateEdition(edition);
@@ -384,7 +384,7 @@ public class DatasetAPIClient implements DatasetClient {
             int statusCode = response.getStatusLine().getStatusCode();
             info().endHTTP(statusCode).log("request complete");
             validate200ResponseCode(req, response);
-            return parseResponseBody(response, DatasetVersionMetadata.class);
+            return parseResponseBody(response, DatasetMetadata.class);
         }
     }
 
