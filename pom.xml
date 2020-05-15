@@ -4,14 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>uk.gov.ons.dp-dataset-api-java-client</groupId>
+    <groupId>com.github.onsdigital</groupId>
     <artifactId>dp-dataset-api-java-client</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <java.version>1.8</java.version>
         <encoding>UTF-8</encoding>
-        <jackson.version>2.6.2</jackson.version>
+        <dp.logging.version>v1.7.0</dp.logging.version>
+        <jackson.version>2.11.0</jackson.version>
     </properties>
 
     <repositories>
@@ -39,7 +40,7 @@
         <dependency>
             <groupId>com.github.ONSdigital</groupId>
             <artifactId>dp-logging</artifactId>
-            <version>v1.6.0</version>
+            <version>${dp.logging.version}</version>
             <scope>provided</scope>
         </dependency>
 
