@@ -23,12 +23,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -89,23 +88,23 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
 
         // Then the request should contain the provided dataset in the body
         String body = IOUtils.toString(httpRequest.getEntity().getContent());
         Dataset requestDataset = json.readValue(body, Dataset.class);
 
-        assertThat(requestDataset.getId()).isEqualTo(datasetID);
-        assertThat(requestDataset.getTitle()).isEqualTo(datasetTitle);
+        assertEquals(datasetID, requestDataset.getId());
+        assertEquals(datasetTitle, requestDataset.getTitle());
 
         // Then the response should be whats returned from the dataset API
         assertNotNull(actualDataset);
-        assertThat(actualDataset.getId()).isEqualTo(expectedDataset.getId());
-        assertThat(actualDataset.getTitle()).isEqualTo(expectedDataset.getTitle());
+        assertEquals(expectedDataset.getId(), actualDataset.getId());
+        assertEquals(expectedDataset.getTitle(), actualDataset.getTitle());
     }
 
     @Test
@@ -129,7 +128,7 @@ public class DatasetAPIClientTest {
 
         // Then the response should be whats returned from the dataset API
         assertNotNull(actualDataset);
-        assertThat(actualDataset.getId()).isEqualTo("123");
+        assertEquals("123", actualDataset.getId());
     }
 
     @Test
@@ -224,15 +223,15 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
 
         // Then the response should be whats returned from the dataset API
-        assertThat(actualDataset.getId()).isEqualTo(expectedDataset.getId());
-        assertThat(actualDataset.getTitle()).isEqualTo(expectedDataset.getTitle());
+        assertEquals(expectedDataset.getId(), actualDataset.getId());
+        assertEquals(expectedDataset.getTitle(), actualDataset.getTitle());
     }
 
     @Test
@@ -317,18 +316,18 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
 
         // Then the request should contain the provided dataset in the body
         String body = IOUtils.toString(httpRequest.getEntity().getContent());
         Dataset requestDataset = json.readValue(body, Dataset.class);
 
-        assertThat(requestDataset.getId()).isEqualTo(dataset.getId());
-        assertThat(requestDataset.getTitle()).isEqualTo(dataset.getTitle());
+        assertEquals(dataset.getId(), requestDataset.getId());
+        assertEquals(dataset.getTitle(), requestDataset.getTitle());
     }
 
     @Test
@@ -440,14 +439,14 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
 
         // Then the response should be whats returned from the dataset API
-        assertThat(actualInstance.getId()).isEqualTo(expectedInstance.getId());
+        assertEquals(expectedInstance.getId(), actualInstance.getId());
     }
 
     @Test
@@ -518,14 +517,14 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
 
         // Then the response should be whats returned from the dataset API
-        assertThat(actualDatasetVersion.getId()).isEqualTo(expectedVersion.getId());
+        assertEquals(expectedVersion.getId(), actualDatasetVersion.getId());
     }
 
     @Test
@@ -625,17 +624,17 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
 
         // Then the request should contain the provided dataset version in the body
         String body = IOUtils.toString(httpRequest.getEntity().getContent());
         DatasetVersion requestDatasetVersion = json.readValue(body, DatasetVersion.class);
 
-        assertThat(requestDatasetVersion.getId()).isEqualTo(datasetVersion.getId());
+        assertEquals(datasetVersion.getId(), requestDatasetVersion.getId());
     }
 
     @Test
@@ -709,11 +708,11 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
     }
 
     @Test
@@ -826,11 +825,11 @@ public class DatasetAPIClientTest {
 
         // Then the request should contain the authentication header
         String actualAuthToken = httpRequest.getFirstHeader(authTokenHeaderName).getValue();
-        assertThat(actualAuthToken).isEqualTo(datasetAPIAuthToken);
+        assertEquals(datasetAPIAuthToken, actualAuthToken);
 
         // Then the request should contain the service token header
         String actualServiceToken = httpRequest.getFirstHeader(serviceTokenHeaderName).getValue();
-        assertThat(actualServiceToken).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, actualServiceToken);
     }
 
     @Test
