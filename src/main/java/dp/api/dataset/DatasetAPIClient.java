@@ -250,7 +250,6 @@ public class DatasetAPIClient implements DatasetClient {
         req.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
         try (CloseableHttpResponse resp = executeRequest(req)) {
-            int statusCode = resp.getStatusLine().getStatusCode();
             validate200ResponseCode(req, resp);
         }
     }
@@ -325,7 +324,6 @@ public class DatasetAPIClient implements DatasetClient {
         req.addHeader(serviceTokenHeaderName, serviceAuthToken);
 
         try (CloseableHttpResponse resp = executeRequest(req)) {
-            int statusCode = resp.getStatusLine().getStatusCode();
             validate200ResponseCode(req, resp);
             return parseResponseBody(resp, DatasetVersion.class);
         }
