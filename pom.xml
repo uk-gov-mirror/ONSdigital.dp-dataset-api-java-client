@@ -112,8 +112,13 @@
                     <!-- if CVSS >= 7.0 (high or critical) then ERROR else WARN -->
                     <fail>true</fail>
                     <cvssScoreThreshold>7.0</cvssScoreThreshold>
-                    <excludeCoordinates>
-                    </excludeCoordinates>
+                    <excludeVulnerabilityIds>
+                        <!-- Jira epic to remove the following exclusion: DIS-5085
+                         
+                          This is to upgrade logback-classic
+                        -->
+                        <exclude>CVE-2026-13006</exclude>
+                    </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
         </plugins>
